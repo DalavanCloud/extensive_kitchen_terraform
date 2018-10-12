@@ -6,6 +6,11 @@ EOD
   type = "string"
 }
 
+variable "kitchen_platform" {
+  description = "The platform name used by Test-Kitchen"
+  type        = "string"
+}
+
 variable "subnet_availability_zone" {
   description = <<EOD
 The isolated, regional location in which to place the subnet of the module

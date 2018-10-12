@@ -4,21 +4,13 @@ terraform {
   required_version = ">= 0.11.4, < 0.12.0"
 }
 
-provider "aws" {
-  version = "~> 1.31"
-}
-
-provider "random" {
-  version = "~> 1.3"
-}
-
 # These aws_instances will be targeted with the operating_system control and the
 # reachable_other_host control
 resource "aws_instance" "remote_group" {
   ami           = "${var.instances_ami}"
   count         = 2
   instance_type = "t2.micro"
-  key_name      = "${aws_key_pair.extensive_tutorial.key_name}"
+  key_name      = "${var.key_pair_name}"
   subnet_id     = "${aws_subnet.extensive_tutorial.id}"
 
   tags {
@@ -36,7 +28,7 @@ resource "aws_instance" "reachable_other_host" {
   ami                         = "${var.instances_ami}"
   associate_public_ip_address = true
   instance_type               = "t2.micro"
-  key_name                    = "${aws_key_pair.extensive_tutorial.key_name}"
+  key_name                    = "${var.key_pair_name}"
   subnet_id                   = "${aws_subnet.extensive_tutorial.id}"
 
   tags {
@@ -45,17 +37,6 @@ resource "aws_instance" "reachable_other_host" {
   }
 
   vpc_security_group_ids = ["${aws_security_group.extensive_tutorial.id}"]
-}
-
-resource "aws_key_pair" "extensive_tutorial" {
-  key_name = "kitchen-terraform-${random_string.key_name.result}"
-
-  public_key = "${var.key_pair_public_key}"
-}
-
-resource "random_string" "key_name" {
-  length  = 9
-  special = false
 }
 
 resource "aws_security_group" "extensive_tutorial" {
